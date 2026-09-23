@@ -129,7 +129,9 @@
 
   <div class="cta">
     <div class="cta-main">
-      <a class="btn" id="download" href="https://github.com/grantgray1/keepmeactive/releases/latest/download/KeepMeActive.apk">Download for Android</a>
+      <!-- Defaults to the releases page, which never 404s. The script below upgrades this to
+           the direct APK link once a release with an attached APK exists. -->
+      <a class="btn" id="download" href="https://github.com/grantgray1/keepmeactive/releases">Download for Android</a>
       <p class="meta" id="release-meta">Free. No account, no ads, nothing leaves your phone.</p>
     </div>
     <div class="qr">
@@ -202,18 +204,33 @@
     }
   } catch (e) { /* QR is a convenience; the button is the real path. */ }
 
-  // Show the current version, if the repo is public. Fails silently otherwise.
+  // Point the button straight at the APK, but only once a release actually has one.
+  // Until then the button falls back to the releases page rather than a 404.
+  var btn = document.getElementById('download');
+  var meta = document.getElementById('release-meta');
+
   fetch('https://api.github.com/repos/grantgray1/keepmeactive/releases/latest')
-    .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('no release')); })
     .then(function (rel) {
+      var apk = (rel.assets || []).filter(function (a) { return /\.apk$/i.test(a.name); })[0];
+      if (!apk) throw new Error('no apk attached');
+
+      btn.href = apk.browser_download_url;
       var when = new Date(rel.published_at).toLocaleDateString('en-GB', {
         day: 'numeric', month: 'short', year: 'numeric'
       });
-      document.getElementById('release-meta').textContent =
-        'Version ' + String(rel.tag_name).replace(/^v/, '') + ', released ' + when +
-        '. Free, no account, nothing leaves your phone.';
+      meta.textContent =
+        'Version ' + String(rel.tag_name).replace(/^v/, '') + ', released ' + when + ', ' +
+        Math.round(apk.size / 1048576 * 10) / 10 + ' MB. ' +
+        'Free, no account, nothing leaves your phone.';
     })
-    .catch(function () { /* Keep the static wording. */ });
+    .catch(function () {
+      // No published build yet. Say so plainly instead of handing over a dead link.
+      btn.textContent = 'Not released yet';
+      btn.style.opacity = '0.65';
+      meta.textContent = 'The first build has not been published yet. ' +
+        'This button will go live as soon as it is.';
+    });
 </script>
 </body>
 </html>
