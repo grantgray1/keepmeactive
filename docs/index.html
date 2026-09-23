@@ -145,6 +145,14 @@
     </div>
   </div>
 
+  <div class="note" id="platform-note" hidden>
+    <p><strong>You are not on an Android phone.</strong> An APK is an Android app and will not
+    install on a computer, an iPhone or an iPad &mdash; the file downloads perfectly well and
+    then simply has nothing to open it.</p>
+    <p>Scan the QR code above with your Android phone, or email yourself this page link and
+    open it there.</p>
+  </div>
+
   <h2>What it does</h2>
   <p>Carriers disconnect pay-as-you-go numbers that sit unused, usually somewhere between 90 and 180 days. Keep Me Active sends a short text from your phone&rsquo;s own SIM every few weeks, so the clock never runs down.</p>
   <ul>
@@ -186,6 +194,33 @@
   <p><a href="https://github.com/grantgray1/keepmeactive/blob/main/IOS-SHORTCUT.md">iPhone instructions &rarr;</a></p>
   <p>One trap to know before you start: if the automation texts another iPhone it goes as a blue-bubble iMessage, which is data and <strong>does not count</strong>. It looks like it worked. Text an Android phone or a landline so you get a green SMS.</p>
 
+  <h2>It downloaded but will not install</h2>
+  <p>Four things cause this, in rough order of likelihood.</p>
+
+  <h3>You are on a computer, not a phone</h3>
+  <p>An APK only installs on Android. On Windows or a Mac nothing will happen when you open it,
+  and on an iPhone it is inert. Scan the QR code at the top of this page with the Android phone
+  instead.</p>
+
+  <h3>&ldquo;App not installed&rdquo; with no further explanation</h3>
+  <p>This almost always means a copy of the app is <em>already</em> on the phone, signed with a
+  different key &mdash; typically a test build. Android refuses to replace an app unless both
+  versions carry the same signature, and it reports that refusal with this singularly unhelpful
+  message. <strong>Uninstall the existing Keep Me Active first</strong>, then install this one.
+  From here on, updates from this page will install over each other cleanly.</p>
+
+  <h3>Android blocks it before it starts</h3>
+  <p>The phone will not install from a browser until you allow it. When it offers
+  <strong>Settings</strong>, grant <strong>Install unknown apps</strong> to whichever app you
+  downloaded with &mdash; Chrome, Files, Samsung Internet &mdash; then tap the APK again. This
+  permission is per-app, so allowing it for Chrome does not allow it for your file manager.</p>
+
+  <h3>Play Protect calls it unsafe</h3>
+  <p>It says this about every app that did not come from the Play Store, including this one.
+  Choose <strong>More details</strong>, then <strong>Install anyway</strong>. If your phone has
+  no option to proceed, the download may have been cut short &mdash; delete the file and
+  download it again.</p>
+
   <h2>What can still break it</h2>
   <p>The app cannot send if the phone is off, has no signal, is in flight mode, or the SIM is out of credit. It tells you when that happens and keeps retrying, but a phone in a drawer with a flat battery is beyond its reach. Leave it on charge, and set a calendar reminder a fortnight before your carrier&rsquo;s real cut-off as a backstop.</p>
 
@@ -219,6 +254,13 @@
   var btn = document.getElementById('download');
   var meta = document.getElementById('release-meta');
   var RELEASES = 'https://github.com/grantgray1/keepmeactive/releases';
+
+  // An APK is inert anywhere but Android, and "it downloaded and nothing happened" is the
+  // single most common way people get stuck. Say so before they waste the download.
+  if (!/Android/i.test(navigator.userAgent || '')) {
+    var note = document.getElementById('platform-note');
+    if (note) note.hidden = false;
+  }
 
   function settle(label, href, note, unavailable) {
     btn.classList.remove('is-checking');
