@@ -59,19 +59,35 @@ jobs:
         with:
           gradle-version: '8.7'
 
+      # Refuses to publish rather than falling back to the debug key. An unsigned release
+      # looks fine until the first update, which Android then rejects with a bare
+      # "App not installed" and no way out but uninstalling. Better to fail here, loudly,
+      # having published nothing.
       - name: Restore the signing key
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
-            echo "KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
-            echo "Signing with the release key."
-          else
-            echo "::warning::No KEYSTORE_BASE64 secret set. Falling back to the CI debug key,"
-            echo "::warning::which changes every run, so this build cannot be installed over"
-            echo "::warning::a previous one. See RELEASING.md."
+          missing=""
+          [ -z "$KEYSTORE_BASE64" ]   && missing="$missing KEYSTORE_BASE64"
+          [ -z "$KEYSTORE_PASSWORD" ] && missing="$missing KEYSTORE_PASSWORD"
+          [ -z "$KEY_ALIAS" ]         && missing="$missing KEY_ALIAS"
+          [ -z "$KEY_PASSWORD" ]      && missing="$missing KEY_PASSWORD"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing signing secret(s):$missing - nothing has been published."
+            echo "::error::Add them under Settings > Secrets and variables > Actions."
+            echo "::error::See RELEASING.md for how to generate the keystore."
+            exit 1
           fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          if [ ! -s "$RUNNER_TEMP/release.keystore" ]; then
+            echo "::error::KEYSTORE_BASE64 did not decode to a file. Re-copy it whole."
+            exit 1
+          fi
+          echo "KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+          echo "Signing with the release key."
 
       - name: Build release APK
         env:
@@ -81,6 +97,15 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Record which certificate signed it
+        run: |
+          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner 2>/dev/null | sort -V | tail -1)
+          if [ -n "$APKSIGNER" ]; then
+            "$APKSIGNER" verify --print-certs app/build/outputs/apk/release/app-release.apk || true
+          else
+            echo "apksigner not found; skipping the fingerprint record."
+          fi
 
       - name: Name the APK
         run: |
