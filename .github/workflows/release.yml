@@ -1,0 +1,106 @@
+name: Release
+
+# Cut a release by pushing a tag:  git tag v1.0.0 && git push origin v1.0.0
+# The APK is published under a fixed filename so the download page can link to
+# .../releases/latest/download/KeepMeActive.apk forever.
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build, e.g. 1.0.0'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Work out the version
+        id: version
+        run: |
+          RAW="${{ github.event.inputs.version }}"
+          if [ -z "$RAW" ]; then RAW="${GITHUB_REF_NAME#v}"; fi
+          if ! echo "$RAW" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Version must look like 1.2.3, got '$RAW'" >&2
+            exit 1
+          fi
+          MAJOR=$(echo "$RAW" | cut -d. -f1)
+          MINOR=$(echo "$RAW" | cut -d. -f2)
+          PATCH=$(echo "$RAW" | cut -d. -f3)
+          # Monotonic so Android always sees a newer build as newer.
+          CODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+          echo "name=$RAW" >> "$GITHUB_OUTPUT"
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+          echo "Building $RAW (versionCode $CODE)"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Restore the signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+            echo "KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+            echo "Signing with the release key."
+          else
+            echo "::warning::No KEYSTORE_BASE64 secret set. Falling back to the CI debug key,"
+            echo "::warning::which changes every run, so this build cannot be installed over"
+            echo "::warning::a previous one. See RELEASING.md."
+          fi
+
+      - name: Build release APK
+        env:
+          APP_VERSION_NAME: ${{ steps.version.outputs.name }}
+          APP_VERSION_CODE: ${{ steps.version.outputs.code }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Name the APK
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk KeepMeActive.apk
+          cp KeepMeActive.apk "KeepMeActive-v${{ steps.version.outputs.name }}.apk"
+          ls -lh KeepMeActive*.apk
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.name }}
+          name: Keep Me Active ${{ steps.version.outputs.name }}
+          files: |
+            KeepMeActive.apk
+            KeepMeActive-v${{ steps.version.outputs.name }}.apk
+          body: |
+            ## Install
+
+            Download **KeepMeActive.apk** below and tap it on your Android phone.
+
+            Android will block the first install: allow **Install unknown apps** for whichever
+            app you downloaded it with, then tap the file again. Play Protect will call it
+            unrecognised, as it does for every app not from the Play Store.
+
+            Full setup instructions: https://grantgray1.github.io/keepmeactive/
+
+            ## iPhone
+
+            iOS gives apps no way to send an SMS without a human tap, so there is no iPhone
+            build. Use the Shortcuts automation instead:
+            https://github.com/grantgray1/keepmeactive/blob/main/IOS-SHORTCUT.md

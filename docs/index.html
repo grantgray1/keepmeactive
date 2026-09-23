@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keep Me Active</title>
+<meta name="description" content="A free Android app that sends a scheduled text from your SIM, so your pay-as-you-go number never gets cut off for inactivity.">
+<meta property="og:title" content="Keep Me Active">
+<meta property="og:description" content="Stop your pay-as-you-go number being disconnected for inactivity.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%231b5e20'/><rect x='30' y='20' width='40' height='60' rx='8' fill='%23a5d6a7'/><rect x='38' y='40' width='24' height='5' fill='%231b5e20'/><rect x='38' y='52' width='24' height='5' fill='%231b5e20'/><rect x='38' y='64' width='14' height='5' fill='%231b5e20'/></svg>">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f5f7f5;
+    --border: #dfe4df;
+    --text: #15201a;
+    --muted: #5b6b60;
+    --accent: #1b5e20;
+    --accent-text: #ffffff;
+    --warn-bg: #fff8e6;
+    --warn-border: #e8cf8f;
+    --warn-text: #5c4708;
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10140f;
+      --surface: #191f18;
+      --border: #2c352b;
+      --text: #e8efe7;
+      --muted: #9aab9d;
+      --accent: #7bc47f;
+      --accent-text: #0b1409;
+      --warn-bg: #241e0c;
+      --warn-border: #4d411c;
+      --warn-text: #e8d9a8;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10140f;
+    --surface: #191f18;
+    --border: #2c352b;
+    --text: #e8efe7;
+    --muted: #9aab9d;
+    --accent: #7bc47f;
+    --accent-text: #0b1409;
+    --warn-bg: #241e0c;
+    --warn-border: #4d411c;
+    --warn-text: #e8d9a8;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.62 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 16px 72px; }
+
+  header { padding: 56px 0 8px; }
+  .mark {
+    width: 56px; height: 56px; border-radius: 14px; background: var(--accent);
+    display: grid; place-items: center; margin-bottom: 20px;
+  }
+  .mark svg { width: 30px; height: 30px; display: block; }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 10px; letter-spacing: -0.02em; }
+  .tagline { font-size: 1.18rem; color: var(--muted); margin: 0 0 28px; }
+
+  h2 { font-size: 1.28rem; margin: 44px 0 12px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.02rem; margin: 26px 0 6px; }
+  p { margin: 0 0 14px; }
+  a { color: var(--accent); }
+  strong { font-weight: 650; }
+
+  .cta {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin: 28px 0 8px;
+    display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+  }
+  .cta-main { flex: 1 1 260px; min-width: 0; }
+  .btn {
+    display: inline-block; background: var(--accent); color: var(--accent-text);
+    text-decoration: none; font-weight: 650; font-size: 1.05rem;
+    padding: 14px 26px; border-radius: 10px; border: 0;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .meta { font-size: 0.88rem; color: var(--muted); margin: 12px 0 0; }
+  .qr {
+    flex: 0 0 auto; text-align: center; font-size: 0.78rem; color: var(--muted);
+  }
+  .qr > div { background: #fff; padding: 8px; border-radius: 8px; line-height: 0; }
+  .qr img, .qr canvas { display: block; }
+  .qr p { margin: 8px 0 0; }
+  @media (max-width: 520px) { .qr { display: none; } }
+
+  .note {
+    background: var(--warn-bg); border: 1px solid var(--warn-border); color: var(--warn-text);
+    border-radius: var(--radius); padding: 16px 18px; margin: 22px 0;
+  }
+  .note p:last-child { margin-bottom: 0; }
+
+  ol, ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+
+  code {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1px 5px; border-radius: 5px; font-size: 0.88em;
+  }
+
+  footer {
+    margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--border);
+    font-size: 0.88rem; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 100 100"><rect x="26" y="12" width="48" height="76" rx="10" fill="#fff" opacity="0.92"/><rect x="36" y="38" width="28" height="6" rx="3" fill="#1b5e20"/><rect x="36" y="52" width="28" height="6" rx="3" fill="#1b5e20"/><rect x="36" y="66" width="16" height="6" rx="3" fill="#1b5e20"/></svg>
+    </div>
+    <h1>Keep Me Active</h1>
+    <p class="tagline">Stops your pay-as-you-go number being cut off for inactivity, by sending one text from your SIM on a schedule.</p>
+  </header>
+
+  <div class="cta">
+    <div class="cta-main">
+      <a class="btn" id="download" href="https://github.com/grantgray1/keepmeactive/releases/latest/download/KeepMeActive.apk">Download for Android</a>
+      <p class="meta" id="release-meta">Free. No account, no ads, nothing leaves your phone.</p>
+    </div>
+    <div class="qr">
+      <div id="qrcode"></div>
+      <p>Open on your phone</p>
+    </div>
+  </div>
+
+  <h2>What it does</h2>
+  <p>Carriers disconnect pay-as-you-go numbers that sit unused, usually somewhere between 90 and 180 days. Keep Me Active sends a short text from your phone&rsquo;s own SIM every few weeks, so the clock never runs down.</p>
+  <ul>
+    <li>Pick a number, a message and an interval. That is the whole setup.</li>
+    <li>Survives reboots and app updates.</li>
+    <li>Retries in six hours if the phone had no signal or was in flight mode.</li>
+    <li>Notifies you on every send, success <em>or</em> failure, so it cannot fail quietly.</li>
+    <li>The countdown only resets when the network confirms the text actually went &mdash; not when it was queued.</li>
+    <li>Picks the right SIM on a dual-SIM phone.</li>
+  </ul>
+
+  <div class="note">
+    <p><strong>Two things that catch people out.</strong></p>
+    <p><strong>WhatsApp will not do this.</strong> It is data traffic, not a billable event on your account, so it does not reset the inactivity clock. Only an SMS or a call does.</p>
+    <p><strong>No cloud service can do it for you.</strong> A text sent <em>to</em> your phone by a server creates no activity on your SIM. The message has to leave the handset, which is why this is an app and not a website.</p>
+  </div>
+
+  <h2>Installing it</h2>
+  <ol>
+    <li>Tap <strong>Download for Android</strong> above on the phone itself.</li>
+    <li>Open the downloaded file. Android will block it the first time &mdash; allow <strong>Install unknown apps</strong> for whichever app you downloaded it with, then tap the file again.</li>
+    <li>Play Protect will say the app is unrecognised. It says that about everything not from the Play Store. Choose <strong>Install anyway</strong>.</li>
+  </ol>
+
+  <h3>Then, in the app</h3>
+  <ol>
+    <li>Grant SMS, notifications and phone state when asked. Phone state is only used to list your SIMs.</li>
+    <li>Enter the number to text. <strong>Use another phone you own.</strong> Avoid shortcodes and free service numbers &mdash; a text to those may not count as normal chargeable activity.</li>
+    <li>Set the interval. 21 days is a safe default.</li>
+    <li>Turn it on, press <strong>Save schedule</strong>, then press <strong>Send one now</strong> and check the text actually arrives. Do not skip this step; it is the only thing that proves the whole chain works.</li>
+    <li>Press <strong>Stop Android killing this app</strong> and set its battery usage to <strong>Unrestricted</strong>. On Samsung, Xiaomi, Oppo, OnePlus and Huawei, also add it to the protected or auto-start list.</li>
+  </ol>
+
+  <h2>Check your carrier first</h2>
+  <p>The inactivity window varies and changes. Search for your carrier&rsquo;s name plus &ldquo;pay as you go inactivity disconnection&rdquo; and set the interval well inside whatever you find. Some carriers <em>also</em> require a top-up every so often regardless of activity &mdash; texting will not save you from that, so check for both rules.</p>
+
+  <h2>On an iPhone</h2>
+  <p>There is no iPhone version, and that is not an oversight. iOS gives apps no way to send a text without a human tapping send &mdash; no entitlement, no sideloading trick, App Store and self-signed alike. The workable equivalent is a Shortcuts automation, which takes about two minutes to build.</p>
+  <p><a href="https://github.com/grantgray1/keepmeactive/blob/main/IOS-SHORTCUT.md">iPhone instructions &rarr;</a></p>
+  <p>One trap to know before you start: if the automation texts another iPhone it goes as a blue-bubble iMessage, which is data and <strong>does not count</strong>. It looks like it worked. Text an Android phone or a landline so you get a green SMS.</p>
+
+  <h2>What can still break it</h2>
+  <p>The app cannot send if the phone is off, has no signal, is in flight mode, or the SIM is out of credit. It tells you when that happens and keeps retrying, but a phone in a drawer with a flat battery is beyond its reach. Leave it on charge, and set a calendar reminder a fortnight before your carrier&rsquo;s real cut-off as a backstop.</p>
+
+  <footer>
+    <p>Free and open source. <a href="https://github.com/grantgray1/keepmeactive">Source on GitHub</a>.</p>
+    <p>No account, no server, no analytics. The only thing the app sends anywhere is your text.</p>
+  </footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  // QR points at this page, not straight at the APK, so the phone gets the instructions too.
+  try {
+    if (window.QRCode) {
+      new QRCode(document.getElementById('qrcode'), {
+        text: window.location.href.split('#')[0],
+        width: 116, height: 116,
+        colorDark: '#15201a', colorLight: '#ffffff'
+      });
+    }
+  } catch (e) { /* QR is a convenience; the button is the real path. */ }
+
+  // Show the current version, if the repo is public. Fails silently otherwise.
+  fetch('https://api.github.com/repos/grantgray1/keepmeactive/releases/latest')
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function (rel) {
+      var when = new Date(rel.published_at).toLocaleDateString('en-GB', {
+        day: 'numeric', month: 'short', year: 'numeric'
+      });
+      document.getElementById('release-meta').textContent =
+        'Version ' + String(rel.tag_name).replace(/^v/, '') + ', released ' + when +
+        '. Free, no account, nothing leaves your phone.';
+    })
+    .catch(function () { /* Keep the static wording. */ });
+</script>
+</body>
+</html>

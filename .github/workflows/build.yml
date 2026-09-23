@@ -1,12 +1,12 @@
-name: Build APK
+name: CI
+
+# Proves every push still compiles. Publishing is release.yml's job, triggered by a tag.
 
 on:
   push:
     branches: [ main, master ]
+  pull_request:
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build:
@@ -28,21 +28,8 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
 
-      - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk keep-me-active.apk
-
-      - name: Upload as a workflow artifact
+      - name: Upload for testing
         uses: actions/upload-artifact@v4
         with:
-          name: keep-me-active-apk
-          path: keep-me-active.apk
-
-      # Also publishes a release so the phone can download the APK from a direct link,
-      # rather than unzipping a workflow artifact in a mobile browser.
-      - name: Publish to the "latest" release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: Keep Me Active (latest build)
-          body: Sideload this APK. Settings > Apps > Special access > Install unknown apps.
-          files: keep-me-active.apk
+          name: keep-me-active-debug
+          path: app/build/outputs/apk/debug/app-debug.apk

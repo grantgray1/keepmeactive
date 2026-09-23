@@ -38,25 +38,17 @@ Nothing leaves the phone except the text itself. No account, no server, no analy
 
 ## Getting the APK
 
-No Play Store involved. Two routes.
+**[Download page](https://grantgray1.github.io/keepmeactive/)** — open it on the phone and tap
+the button. That is the route to send anyone else.
 
-### Route A: build it in GitHub Actions (no tools to install)
+Direct link, which always points at the newest build:
 
-1. Create a new **private** repository on GitHub.
-2. Push this folder to it (or drag the files into the web uploader).
-3. The `Build APK` workflow runs automatically. When it finishes, open the repo's
-   **Releases** page — there is a `latest` release with `keep-me-active.apk` attached.
-4. Open that release page in the phone's browser and tap the APK to download it.
+    https://github.com/grantgray1/keepmeactive/releases/latest/download/KeepMeActive.apk
 
-Re-running the workflow (Actions tab > Build APK > Run workflow) rebuilds and replaces it.
-
-### Route B: build it locally
-
-Install Android Studio, open this folder, let it sync, then `Build > Build Bundle(s) / APK(s)
-> Build APK(s)`. The file lands in `app/build/outputs/apk/debug/`.
-
-Either way the APK is signed with the standard debug key. That is fine for sideloading onto
-your own phone; it just means it can never be uploaded to the Play Store as-is.
+No Play Store involved. To build it yourself instead, install Android Studio, open this folder,
+let it sync, then `Build > Build Bundle(s) / APK(s) > Build APK(s)`; the file lands in
+`app/build/outputs/apk/debug/`. Cutting a release and setting up signing are covered in
+[RELEASING.md](RELEASING.md).
 
 ## Installing
 

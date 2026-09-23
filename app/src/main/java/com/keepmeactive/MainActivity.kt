@@ -210,7 +210,14 @@ class MainActivity : AppCompatActivity() {
         if (lastResult.isNotBlank()) lines += "Last result: $lastResult"
         lines += if (enabled) "Next due: ${formatTime(nextAttemptAt())}" else "Next due: -"
         if (!SmsSender.hasSmsPermission(this)) lines += "\nSMS permission is not granted."
+        lines += "\nVersion ${versionName()}"
         binding.tvStatus.text = lines.joinToString("\n")
+    }
+
+    private fun versionName(): String = try {
+        packageManager.getPackageInfo(packageName, 0).versionName ?: "unknown"
+    } catch (_: Exception) {
+        "unknown"
     }
 
     private fun toast(text: String) = Toast.makeText(this, text, Toast.LENGTH_LONG).show()
