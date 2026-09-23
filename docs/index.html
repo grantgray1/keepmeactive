@@ -85,8 +85,12 @@
     display: inline-block; background: var(--accent); color: var(--accent-text);
     text-decoration: none; font-weight: 650; font-size: 1.05rem;
     padding: 14px 26px; border-radius: 10px; border: 0;
+    min-width: 246px; text-align: center;   /* stops the label change resizing the button */
+    transition: opacity 0.18s ease;
   }
   .btn:hover { filter: brightness(1.08); }
+  .btn.is-checking { opacity: 0.55; }
+  .btn.is-unavailable { opacity: 0.55; cursor: default; }
   .meta { font-size: 0.88rem; color: var(--muted); margin: 12px 0 0; }
   .qr {
     flex: 0 0 auto; text-align: center; font-size: 0.78rem; color: var(--muted);
@@ -129,9 +133,10 @@
 
   <div class="cta">
     <div class="cta-main">
-      <!-- Defaults to the releases page, which never 404s. The script below upgrades this to
-           the direct APK link once a release with an attached APK exists. -->
-      <a class="btn" id="download" href="https://github.com/grantgray1/keepmeactive/releases">Download for Android</a>
+      <!-- Starts in a neutral "checking" state so the button never promises a download and
+           then takes it away. The script below settles it exactly once. The href always
+           points somewhere real, so it works with JavaScript off too. -->
+      <a class="btn is-checking" id="download" href="https://github.com/grantgray1/keepmeactive/releases">Checking for the latest build</a>
       <p class="meta" id="release-meta">Free. No account, no ads, nothing leaves your phone.</p>
     </div>
     <div class="qr">
@@ -204,32 +209,77 @@
     }
   } catch (e) { /* QR is a convenience; the button is the real path. */ }
 
-  // Point the button straight at the APK, but only once a release actually has one.
-  // Until then the button falls back to the releases page rather than a 404.
+  // Settle the download button exactly once, into one of three states.
+  //
+  // A failed lookup is NOT the same as "there is no release": the GitHub API rate-limits
+  // anonymous callers at 60 requests an hour per IP, and a phone on shared mobile CGNAT can
+  // hit that through no fault of its own. Only a genuine 404 means no release exists;
+  // anything else leaves a working link to the releases page rather than telling the visitor
+  // a lie about the app not being out yet.
   var btn = document.getElementById('download');
   var meta = document.getElementById('release-meta');
+  var RELEASES = 'https://github.com/grantgray1/keepmeactive/releases';
+
+  function settle(label, href, note, unavailable) {
+    btn.classList.remove('is-checking');
+    btn.textContent = label;
+    btn.href = href;
+    if (unavailable) btn.classList.add('is-unavailable');
+    if (note) meta.textContent = note;
+  }
+
+  var settled = false;
+  function once(fn) { if (!settled) { settled = true; fn(); } }
+
+  // If GitHub is slow or unreachable, do not sit on "Checking" forever.
+  var timer = setTimeout(function () {
+    once(function () { settle('Download for Android', RELEASES, null, false); });
+  }, 5000);
 
   fetch('https://api.github.com/repos/grantgray1/keepmeactive/releases/latest')
-    .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('no release')); })
+    .then(function (r) {
+      if (r.ok) return r.json();
+      var e = new Error('lookup failed');
+      e.status = r.status;
+      throw e;
+    })
     .then(function (rel) {
       var apk = (rel.assets || []).filter(function (a) { return /\.apk$/i.test(a.name); })[0];
-      if (!apk) throw new Error('no apk attached');
-
-      btn.href = apk.browser_download_url;
+      clearTimeout(timer);
+      if (!apk) {
+        // A release exists but carries no APK. The releases page is still the honest place.
+        once(function () { settle('Download for Android', RELEASES, null, false); });
+        return;
+      }
       var when = new Date(rel.published_at).toLocaleDateString('en-GB', {
         day: 'numeric', month: 'short', year: 'numeric'
       });
-      meta.textContent =
-        'Version ' + String(rel.tag_name).replace(/^v/, '') + ', released ' + when + ', ' +
-        Math.round(apk.size / 1048576 * 10) / 10 + ' MB. ' +
-        'Free, no account, nothing leaves your phone.';
+      once(function () {
+        settle(
+          'Download for Android',
+          apk.browser_download_url,
+          'Version ' + String(rel.tag_name).replace(/^v/, '') + ', released ' + when + ', ' +
+            Math.round(apk.size / 1048576 * 10) / 10 + ' MB. ' +
+            'Free, no account, nothing leaves your phone.',
+          false
+        );
+      });
     })
-    .catch(function () {
-      // No published build yet. Say so plainly instead of handing over a dead link.
-      btn.textContent = 'Not released yet';
-      btn.style.opacity = '0.65';
-      meta.textContent = 'The first build has not been published yet. ' +
-        'This button will go live as soon as it is.';
+    .catch(function (e) {
+      clearTimeout(timer);
+      if (e && e.status === 404) {
+        once(function () {
+          settle(
+            'Not released yet',
+            RELEASES,
+            'The first build has not been published yet. This button goes live the moment it is.',
+            true
+          );
+        });
+      } else {
+        // Rate limited, offline, blocked. Hand over the releases page and say nothing false.
+        once(function () { settle('Download for Android', RELEASES, null, false); });
+      }
     });
 </script>
 </body>
