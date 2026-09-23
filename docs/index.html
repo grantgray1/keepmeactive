@@ -174,7 +174,7 @@
   <ol>
     <li>Tap <strong>Download for Android</strong> above on the phone itself.</li>
     <li>Open the downloaded file. Android will block it the first time &mdash; allow <strong>Install unknown apps</strong> for whichever app you downloaded it with, then tap the file again.</li>
-    <li>Play Protect will say the app is unrecognised. It says that about everything not from the Play Store. Choose <strong>Install anyway</strong>.</li>
+    <li>Play Protect will warn that the app is unsafe. It says that about everything not from the Play Store, and louder here because the app sends texts. Tap <strong>More details</strong>, then <strong>Install anyway</strong> — see the troubleshooting section below if you cannot find it.</li>
   </ol>
 
   <h3>Then, in the app</h3>
@@ -215,11 +215,31 @@
   downloaded with &mdash; Chrome, Files, Samsung Internet &mdash; then tap the APK again. This
   permission is per-app, so allowing it for Chrome does not allow it for your file manager.</p>
 
-  <h3>Play Protect calls it unsafe</h3>
-  <p>It says this about every app that did not come from the Play Store, including this one.
-  Choose <strong>More details</strong>, then <strong>Install anyway</strong>. If your phone has
-  no option to proceed, the download may have been cut short &mdash; delete the file and
-  download it again.</p>
+  <h3>Play Protect says the app is unsafe or dangerous</h3>
+  <p>This is the one almost everybody hits. Play Protect warns about every app that did not come
+  from the Play Store, and it warns <em>harder</em> about this one because the app asks for
+  permission to send texts &mdash; a permission Google treats as high-risk, for good reason.
+  Nothing is wrong with your download; the warning is about where the app came from, not what
+  is in it.</p>
+  <p>On the warning, tap <strong>More details</strong> and then <strong>Install anyway</strong>.
+  That wording is deliberately understated &mdash; on many phones it is faint text at the bottom
+  of the dialog rather than a button, and it is easy to miss entirely.</p>
+  <p>If there is genuinely no way through, switch the scanner off for a minute:</p>
+  <ol>
+    <li>Open the <strong>Play Store</strong> and tap your <strong>profile picture</strong>.</li>
+    <li>Go to <strong>Play Protect</strong>, then the <strong>gear icon</strong>.</li>
+    <li>Turn off <strong>Scan apps with Play Protect</strong>.</li>
+    <li>Install the APK.</li>
+    <li><strong>Turn it back on.</strong> It is worth having; you only needed it out of the way
+    for this one install.</li>
+  </ol>
+  <p>You may also need to allow the source: <strong>Settings &rarr; Apps &rarr; Special app
+  access &rarr; Install unknown apps</strong>, pick the browser you downloaded with, and allow
+  it.</p>
+  <p>There is no way to make this warning disappear for good. Only apps distributed through the
+  Play Store avoid it, and an app that sends SMS in the background is very unlikely to be
+  accepted there &mdash; Google reserves that permission almost entirely for apps that replace
+  your messaging app. Tapping through the warning once is the price of the app existing at all.</p>
 
   <h2>What can still break it</h2>
   <p>The app cannot send if the phone is off, has no signal, is in flight mode, or the SIM is out of credit. It tells you when that happens and keeps retrying, but a phone in a drawer with a flat battery is beyond its reach. Leave it on charge, and set a calendar reminder a fortnight before your carrier&rsquo;s real cut-off as a backstop.</p>
