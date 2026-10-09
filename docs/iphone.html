@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keep Me Active on iPhone</title>
+<meta name="description" content="How to keep a pay-as-you-go number alive on an iPhone, using a Shortcuts automation, and why no iPhone app can do it.">
+<meta property="og:title" content="Keep Me Active on iPhone">
+<meta property="og:description" content="Keep your pay-as-you-go number alive on an iPhone with a Shortcuts automation.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%231b5e20'/><rect x='30' y='20' width='40' height='60' rx='8' fill='%23a5d6a7'/><rect x='38' y='40' width='24' height='5' fill='%231b5e20'/><rect x='38' y='52' width='24' height='5' fill='%231b5e20'/><rect x='38' y='64' width='14' height='5' fill='%231b5e20'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="./">&larr; Keep Me Active</a>
+    <h1>On an iPhone</h1>
+    <p class="tagline">There is no iPhone app, and there cannot be one. Here is the thing that does work instead &mdash; about two minutes to set up.</p>
+  </header>
+
+  <h2>Why there is no app</h2>
+  <p>iOS gives apps no way to send a text message on their own. The only messaging interface Apple
+  exposes to a third-party app opens the Messages compose sheet with the text already filled in,
+  and then waits for a person to press send. There is no entitlement that lifts this, no developer
+  programme tier that unlocks it, and no sideloading trick around it. An App Store app, a TestFlight
+  build and a self-signed app are all blocked identically.</p>
+  <p>So on iPhone the answer is not an app at all. It is a <strong>Shortcuts automation</strong>,
+  which is an Apple feature and therefore allowed to do what apps are not.</p>
+
+  <h2>Build it</h2>
+  <ol class="steps">
+    <li>
+      <h3>Open Shortcuts and start an automation</h3>
+      <p>Go to the <strong>Automation</strong> tab, then tap <strong>+</strong> in the top right.</p>
+    </li>
+    <li>
+      <h3>Choose Time of Day</h3>
+      <p>Pick a time when the phone is reliably on, awake and in signal. Mid-morning beats 3am,
+      because a failure at 3am is one you will sleep through.</p>
+    </li>
+    <li>
+      <h3>Set it to repeat Monthly</h3>
+      <p>Pick a day of the month. Monthly is comfortably inside every carrier's inactivity window.</p>
+    </li>
+    <li>
+      <h3>Turn off &ldquo;Ask Before Running&rdquo;</h3>
+      <p>Confirm <strong>Run Immediately</strong> when it asks. Leave <strong>Notify When Run</strong>
+      switched <em>on</em> &mdash; you want visible proof each month that it fired.</p>
+    </li>
+    <li>
+      <h3>Add the Send Message action</h3>
+      <p>Tap <strong>Next</strong>, then <strong>New Blank Automation</strong>, then add
+      <strong>Send Message</strong>. Set the message to something short, and the recipient to
+      another phone you own.</p>
+    </li>
+    <li>
+      <h3>Check it is sending by Messages</h3>
+      <p>Not WhatsApp. If the share sheet offers a choice, pick Messages. Then tap
+      <strong>Done</strong>.</p>
+    </li>
+  </ol>
+
+  <div class="note">
+    <p><strong>The blue bubble trap &mdash; this defeats most people.</strong></p>
+    <p>If you text another iPhone, Messages sends it as an <strong>iMessage</strong>: over data, in
+    a blue bubble. An iMessage is not a chargeable SMS and <strong>will not keep your SIM alive</strong>.
+    Everything will look like it worked. It did not.</p>
+    <p>Force a real green-bubble SMS by doing one of these:</p>
+    <ul>
+      <li><strong>Text an Android phone.</strong> Simplest and most reliable.</li>
+      <li><strong>Text a landline.</strong> It goes out as an SMS regardless of what happens at the other end.</li>
+      <li>Turn iMessage off entirely at <strong>Settings &rarr; Apps &rarr; Messages</strong>, if this
+      iPhone is a spare whose only job is holding the number.</li>
+    </ul>
+    <p>Before trusting any of this, send one by hand and look at the bubble.
+    <strong>Green is SMS and counts. Blue is iMessage and does not.</strong></p>
+  </div>
+
+  <h2>Prove it actually runs</h2>
+  <p>Do not wait a month to find out. Set the automation to a time three minutes away, put the phone
+  down, and watch. Once you have seen it fire by itself and land as a green message on the other
+  phone, edit it back to monthly.</p>
+  <p>Repeat that check after any major iOS update. Apple has changed the rules about automations
+  running while the phone is locked more than once, and an automation that worked perfectly on one
+  version can quietly start waiting for a tap on the next. That is the real weakness of this route,
+  and it is worth knowing about rather than discovering in six months.</p>
+
+  <h2>Give yourself a backstop</h2>
+  <p>Add a repeating <strong>Reminder</strong> a fortnight before your carrier's actual cut-off that
+  says &ldquo;check the keep-alive text went out&rdquo;. When it fires, open Messages and look at the
+  last green message to that number. If it is stale, send one by hand. Thirty seconds, twice a year,
+  and it covers every way the automation can silently stop.</p>
+
+  <h2>Check your carrier</h2>
+  <p>Inactivity windows vary and change &mdash; usually somewhere between 90 and 180 days. Search for
+  your carrier's name plus &ldquo;pay as you go inactivity disconnection&rdquo;. Some carriers also
+  require a top-up every so often regardless of activity, which no amount of texting will satisfy,
+  so check for both rules.</p>
+
+  <h2>The honest recommendation</h2>
+  <p>If this number genuinely matters, the iPhone route is the weaker of the two. The Android app
+  confirms with the network that each text actually left the handset, and tells you when one did not.
+  iOS gives you no such confirmation &mdash; the automation reports that it ran, not that a chargeable
+  message was delivered.</p>
+  <p>A cheap Android handset left on a charger with the SIM in it is far more dependable, and the app
+  on it is free.</p>
+  <p><a href="./">&larr; Back to Keep Me Active for Android</a></p>
+
+  <footer>
+    <p>Free and open source. <a href="https://github.com/grantgray1/keepmeactive">Source on GitHub</a>.</p>
+  </footer>
+
+</div>
+</body>
+</html>

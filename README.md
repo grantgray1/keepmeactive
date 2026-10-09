@@ -94,8 +94,9 @@ handset. That is by far the most reliable arrangement.
 ## iPhone
 
 iOS does not allow any app to send an SMS without you tapping send, so there is no iPhone
-build of this. The workable equivalent is a Shortcuts automation — see
-[IOS-SHORTCUT.md](IOS-SHORTCUT.md).
+build of this. The workable equivalent is a Shortcuts automation — see the
+[iPhone instructions](https://grantgray1.github.io/keepmeactive/iphone.html), or
+[IOS-SHORTCUT.md](IOS-SHORTCUT.md) in this repo.
 
 ## Project layout
 

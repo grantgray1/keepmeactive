@@ -1,5 +1,8 @@
 # Keep Me Active on iPhone
 
+> There is a friendlier version of this page at
+> <https://grantgray1.github.io/keepmeactive/iphone.html>.
+
 ## Why there is no iPhone app
 
 iOS gives apps no way to send an SMS in the background. The only messaging API available to a

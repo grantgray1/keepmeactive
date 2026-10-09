@@ -9,116 +9,7 @@
 <meta property="og:description" content="Stop your pay-as-you-go number being disconnected for inactivity.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%231b5e20'/><rect x='30' y='20' width='40' height='60' rx='8' fill='%23a5d6a7'/><rect x='38' y='40' width='24' height='5' fill='%231b5e20'/><rect x='38' y='52' width='24' height='5' fill='%231b5e20'/><rect x='38' y='64' width='14' height='5' fill='%231b5e20'/></svg>">
-<style>
-  :root {
-    --bg: #ffffff;
-    --surface: #f5f7f5;
-    --border: #dfe4df;
-    --text: #15201a;
-    --muted: #5b6b60;
-    --accent: #1b5e20;
-    --accent-text: #ffffff;
-    --warn-bg: #fff8e6;
-    --warn-border: #e8cf8f;
-    --warn-text: #5c4708;
-    --radius: 12px;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #10140f;
-      --surface: #191f18;
-      --border: #2c352b;
-      --text: #e8efe7;
-      --muted: #9aab9d;
-      --accent: #7bc47f;
-      --accent-text: #0b1409;
-      --warn-bg: #241e0c;
-      --warn-border: #4d411c;
-      --warn-text: #e8d9a8;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #10140f;
-    --surface: #191f18;
-    --border: #2c352b;
-    --text: #e8efe7;
-    --muted: #9aab9d;
-    --accent: #7bc47f;
-    --accent-text: #0b1409;
-    --warn-bg: #241e0c;
-    --warn-border: #4d411c;
-    --warn-text: #e8d9a8;
-  }
-
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font: 17px/1.62 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 0 16px 72px; }
-
-  header { padding: 56px 0 8px; }
-  .mark {
-    width: 56px; height: 56px; border-radius: 14px; background: var(--accent);
-    display: grid; place-items: center; margin-bottom: 20px;
-  }
-  .mark svg { width: 30px; height: 30px; display: block; }
-  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 10px; letter-spacing: -0.02em; }
-  .tagline { font-size: 1.18rem; color: var(--muted); margin: 0 0 28px; }
-
-  h2 { font-size: 1.28rem; margin: 44px 0 12px; letter-spacing: -0.01em; }
-  h3 { font-size: 1.02rem; margin: 26px 0 6px; }
-  p { margin: 0 0 14px; }
-  a { color: var(--accent); }
-  strong { font-weight: 650; }
-
-  .cta {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 24px; margin: 28px 0 8px;
-    display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
-  }
-  .cta-main { flex: 1 1 260px; min-width: 0; }
-  .btn {
-    display: inline-block; background: var(--accent); color: var(--accent-text);
-    text-decoration: none; font-weight: 650; font-size: 1.05rem;
-    padding: 14px 26px; border-radius: 10px; border: 0;
-    min-width: 246px; text-align: center;   /* stops the label change resizing the button */
-    transition: opacity 0.18s ease;
-  }
-  .btn:hover { filter: brightness(1.08); }
-  .btn.is-checking { opacity: 0.55; }
-  .btn.is-unavailable { opacity: 0.55; cursor: default; }
-  .meta { font-size: 0.88rem; color: var(--muted); margin: 12px 0 0; }
-  .qr {
-    flex: 0 0 auto; text-align: center; font-size: 0.78rem; color: var(--muted);
-  }
-  .qr > div { background: #fff; padding: 8px; border-radius: 8px; line-height: 0; }
-  .qr img, .qr canvas { display: block; }
-  .qr p { margin: 8px 0 0; }
-  @media (max-width: 520px) { .qr { display: none; } }
-
-  .note {
-    background: var(--warn-bg); border: 1px solid var(--warn-border); color: var(--warn-text);
-    border-radius: var(--radius); padding: 16px 18px; margin: 22px 0;
-  }
-  .note p:last-child { margin-bottom: 0; }
-
-  ol, ul { margin: 0 0 14px; padding-left: 22px; }
-  li { margin-bottom: 8px; }
-
-  code {
-    background: var(--surface); border: 1px solid var(--border);
-    padding: 1px 5px; border-radius: 5px; font-size: 0.88em;
-  }
-
-  footer {
-    margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--border);
-    font-size: 0.88rem; color: var(--muted);
-  }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="wrap">
@@ -145,12 +36,20 @@
     </div>
   </div>
 
+  <div class="note" id="ios-note" hidden>
+    <p><strong>You are on an iPhone or iPad.</strong> This download is an Android app and will not
+    install here &mdash; and no iPhone version can exist, because iOS gives apps no way to send a
+    text without someone tapping send.</p>
+    <p>There is a Shortcuts automation that does the same job, and it takes about two minutes to
+    set up. <a href="iphone.html"><strong>iPhone instructions &rarr;</strong></a></p>
+  </div>
+
   <div class="note" id="platform-note" hidden>
     <p><strong>You are not on an Android phone.</strong> An APK is an Android app and will not
-    install on a computer, an iPhone or an iPad &mdash; the file downloads perfectly well and
-    then simply has nothing to open it.</p>
+    install on a computer &mdash; the file downloads perfectly well and then simply has nothing
+    to open it.</p>
     <p>Scan the QR code above with your Android phone, or email yourself this page link and
-    open it there.</p>
+    open it there. On an iPhone, use the <a href="iphone.html">Shortcuts automation</a> instead.</p>
   </div>
 
   <h2>What it does</h2>
@@ -191,7 +90,7 @@
 
   <h2>On an iPhone</h2>
   <p>There is no iPhone version, and that is not an oversight. iOS gives apps no way to send a text without a human tapping send &mdash; no entitlement, no sideloading trick, App Store and self-signed alike. The workable equivalent is a Shortcuts automation, which takes about two minutes to build.</p>
-  <p><a href="https://github.com/grantgray1/keepmeactive/blob/main/IOS-SHORTCUT.md">iPhone instructions &rarr;</a></p>
+  <p><a class="btn btn-secondary" href="iphone.html">iPhone instructions</a></p>
   <p>One trap to know before you start: if the automation texts another iPhone it goes as a blue-bubble iMessage, which is data and <strong>does not count</strong>. It looks like it worked. Text an Android phone or a landline so you get a green SMS.</p>
 
   <h2>It downloaded but will not install</h2>
@@ -276,9 +175,16 @@
   var RELEASES = 'https://github.com/grantgray1/keepmeactive/releases';
 
   // An APK is inert anywhere but Android, and "it downloaded and nothing happened" is the
-  // single most common way people get stuck. Say so before they waste the download.
-  if (!/Android/i.test(navigator.userAgent || '')) {
-    var note = document.getElementById('platform-note');
+  // single most common way people get stuck. Say so before they waste the download, and send
+  // iPhone visitors somewhere that can actually help them.
+  var ua = navigator.userAgent || '';
+  var isAndroid = /Android/i.test(ua);
+  // iPadOS reports itself as a Mac, so fall back to the touch-points giveaway.
+  var isIOS = /iPhone|iPad|iPod/i.test(ua) ||
+              (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+
+  if (!isAndroid) {
+    var note = document.getElementById(isIOS ? 'ios-note' : 'platform-note');
     if (note) note.hidden = false;
   }
 
